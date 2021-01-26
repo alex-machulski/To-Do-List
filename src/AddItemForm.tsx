@@ -36,7 +36,9 @@ function AddItemForm(props: AddItemFormType) {
                 onChange={onChangeHandler}
                 onKeyPress={onKeyPressHandler}
                 error={!!error}
-                helperText={error} label={"New Title"}/>
+                helperText={error}
+                label={"New Title"}
+            />
             <IconButton color={"primary"} onClick={addItem}>
                 <AddBox/>
             </IconButton>

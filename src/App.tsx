@@ -12,12 +12,11 @@ export type TaskType = {
     isDone: boolean
 }
 
-type TodoListType = {
+export type TodoListType = {
     id: string
     title: string
     filter: FilterValuesType
 }
-
 
 export type FilterValuesType = "all" | "active" | "completed"
 
@@ -35,7 +34,6 @@ function App() {
         {id: todoListID1, title: "What to learn", filter: "all"},
         {id: todoListID2, title: "What to buy", filter: "all"}
     ])
-
 
     const [tasks, setTasks] = useState<TaskStateType>({
             [todoListID1]: [
@@ -162,12 +160,7 @@ function App() {
                         todoLists.map(tl => {
 
                             let tasksForTodoList = filterTasksForTodoList(tl.filter, tl.id);
-                            // if (tl.filter === "active") {
-                            //     tasksForTodoList = tasks[tl.id].filter(t => !t.isDone)
-                            // }
-                            // if (tl.filter === "completed") {
-                            //     tasksForTodoList = tasks[tl.id].filter(t => t.isDone)
-                            // }
+
                             return (
                                 <Grid item key={tl.id}>
                                     <Paper elevation={10} style={{padding: "20px"}}>
