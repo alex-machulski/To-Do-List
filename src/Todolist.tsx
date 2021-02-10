@@ -20,6 +20,11 @@ type PropsType = {
 }
 
 export function ToDoList(props: PropsType) {
+    // const todolist = useSelector<AppRootStateType, TodoListType>(state =>
+    //     state.todolists.filter(todo => todo.id === props.id)[0]);
+    // const tasks = useSelector<AppRootStateType, Array<TaskType>>(state =>
+    //     state.tasks[props.id]);
+    // const dispatch = useDispatch();
 
     const addTask = (title: string) => {
         props.addTask(title, props.id)
@@ -76,15 +81,15 @@ export function ToDoList(props: PropsType) {
                         const changeStatus = (e: ChangeEvent<HTMLInputElement>) => {
                             props.changeStatus(t.id, e.currentTarget.checked, props.id)
                         }
-
                         const changeTitle = (title: string) => {
                             props.changeTaskTitle(t.id, title, props.id)
                         }
 
                         return (
                             <li key={t.id} className={t.isDone ? "is-done" : ""}>
-                                <Checkbox onChange={changeStatus}
-                                          checked={t.isDone}
+                                <Checkbox
+                                    onChange={changeStatus}
+                                    checked={t.isDone}
                                 />
                                 <EditableSpan title={t.title} changeTitle={changeTitle}/>
                                 {/*<span>{t.title}</span>*/}

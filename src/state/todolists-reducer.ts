@@ -24,7 +24,9 @@ type ChangeTodoListFilterActionType = {
 export type ActionsType = RemoveTodoListActionType | AddTodoListActionType | ChangeTodoListTitleActionType |
     ChangeTodoListFilterActionType
 
-export function todoListsReducer(state: Array<TodoListType>, action: ActionsType) {
+const initialState: Array<TodoListType> = [];
+
+export function todoListsReducer(state: Array<TodoListType> = initialState, action: ActionsType): Array<TodoListType> {
     switch (action.type) {
         case 'REMOVE-TODOLIST':
             return state.filter(tl => tl.id !== action.id)
@@ -58,18 +60,18 @@ export function todoListsReducer(state: Array<TodoListType>, action: ActionsType
     }
 }
 
-export const RemoveTodolistAC = (todolistId: string): RemoveTodoListActionType => {
-    return {type: 'REMOVE-TODOLIST', id: todolistId}
+export const removeTodolistAC = (todolistId: string): RemoveTodoListActionType => {
+    return {type: 'REMOVE-TODOLIST', id: todolistId};
 }
 
-export const AddTodolistAC = (title: string): AddTodoListActionType => {
-    return {type: "ADD-TODOLIST", title: title, todolistId: v1()}
+export const addTodolistAC = (title: string): AddTodoListActionType => {
+    return {type: "ADD-TODOLIST", title: title, todolistId: v1()};
 }
 
-export const ChangeTodoListTitleAC = (todolistId: string, newTitle: string): ChangeTodoListTitleActionType => {
-    return {type: "CHANGE-TODOLIST-TITLE", id: todolistId, title: newTitle}
+export const changeTodoListTitleAC = (todolistId: string, newTitle: string): ChangeTodoListTitleActionType => {
+    return {type: "CHANGE-TODOLIST-TITLE", id: todolistId, title: newTitle};
 }
 
-export const ChangeTodoListFilterAC = (todolistId: string, filter: FilterValuesType): ChangeTodoListFilterActionType => {
-    return {type: "CHANGE-TODOLIST-FILTER", id: todolistId, filter: filter}
+export const changeTodoListFilterAC = (todolistId: string, filter: FilterValuesType): ChangeTodoListFilterActionType => {
+    return {type: "CHANGE-TODOLIST-FILTER", id: todolistId, filter: filter};
 }
