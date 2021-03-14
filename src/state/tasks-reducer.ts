@@ -84,7 +84,7 @@ export function tasksReducer(state: TasksStateType = initialState, action: Actio
         case 'ADD-TODOLIST': {
             return {
                 ...state,
-                [action.todolistId]: []
+                [action.todolist.id]: []
             }
         }
         case 'REMOVE-TODOLIST': {
@@ -141,7 +141,6 @@ export const removeTaskTC = (todolistId: string, taskId: string) => (dispatch: D
     debugger;
     todolistsAPI.deleteTask(todolistId, taskId)
         .then((res) => {
-            debugger;
             const action = removeTaskAC(taskId, todolistId);
             dispatch(action)
         })
