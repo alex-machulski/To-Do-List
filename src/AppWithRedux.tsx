@@ -8,14 +8,11 @@ import {
     addTodolistTC,
     changeTodolistFilterAC,
     changeTodolistTitleTC,
-    removeTodolistTC, setTodosTC, TodolistDomainType
+    removeTodolistTC,
+    setTodosTC,
+    TodolistDomainType
 } from "./state/todolists-reducer";
-import {
-    addTaskTC,
-    changeTaskStatusAC,
-    changeTaskTitleAC,
-    removeTaskTC, updateTaskStatusTC, updateTaskTitleTC
-} from "./state/tasks-reducer";
+import {addTaskTC, removeTaskTC, updateTaskStatusTC, updateTaskTitleTC} from "./state/tasks-reducer";
 import {useDispatch, useSelector} from "react-redux";
 import {AppRootStateType} from "./state/store";
 import {TaskStatuses, TaskType} from "./api/todolists-api";
@@ -39,8 +36,8 @@ function AppWithRedux() {
     const tasks = useSelector<AppRootStateType, TasksStateType>(state => state.tasks);
 
     const removeTask = useCallback(function (id: string, todolistId: string) {
-        const action = removeTaskTC(todolistId, id);
-        dispatch(action);
+        const thunk = removeTaskTC(todolistId, id);
+        dispatch(thunk);
     }, []);
 
     const addTask = useCallback(function (todolistId: string, taskTitle: string) {
@@ -48,15 +45,11 @@ function AppWithRedux() {
     }, []);
 
     const changeStatus = useCallback(function (id: string, status: TaskStatuses, todolistId: string) {
-        dispatch(updateTaskStatusTC(id, status, todolistId))
-        const action = changeTaskStatusAC(id, status, todolistId);
-        dispatch(action);
+        dispatch(updateTaskStatusTC(id, status, todolistId));
     }, []);
 
     const changeTaskTitle = useCallback(function (id: string, newTitle: string, todolistId: string) {
-        dispatch(updateTaskTitleTC(id, newTitle, todolistId))
-        const action = changeTaskTitleAC(id, newTitle, todolistId);
-        dispatch(action);
+        dispatch(updateTaskTitleTC(id, newTitle, todolistId));
     }, []);
 
     const changeFilter = useCallback(function (value: FilterValuesType, todolistId: string) {
@@ -65,8 +58,8 @@ function AppWithRedux() {
     }, []);
 
     const removeTodolist = useCallback(function (id: string) {
-        const action = removeTodolistTC(id);
-        dispatch(action);
+        const thunk = removeTodolistTC(id);
+        dispatch(thunk);
     }, []);
 
     const addTodolist = useCallback((todolistTitle: string) => {
@@ -74,8 +67,8 @@ function AppWithRedux() {
     }, [dispatch]);
 
     const changeTodolistTitle = useCallback(function (id: string, title: string) {
-        const action = changeTodolistTitleTC(id, title);
-        dispatch(action);
+        const thunk = changeTodolistTitleTC(id, title);
+        dispatch(thunk);
     }, []);
 
     // UI

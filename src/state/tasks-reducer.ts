@@ -101,7 +101,7 @@ export const removeTaskAC = (taskId: string, todolistId: string): RemoveTaskActi
     return {type: 'REMOVE-TASK', taskId: taskId, todolistId: todolistId}
 }
 
-export const addTaskAC = (task: TaskType) => {
+export const addTaskAC = (task: TaskType): AddTaskActionType => {
     return {type: 'ADD-TASK', task}
 }
 
@@ -146,49 +146,55 @@ export const removeTaskTC = (todolistId: string, taskId: string) => (dispatch: D
         })
 }
 
-export const updateTaskStatusTC = (id: string, status: TaskStatuses, todolistId: string) => (dispatch: Dispatch, getState: () => AppRootStateType) => {
-    const state = getState();
-    const tasks = state.tasks;
-    const tasksForCurrentTodolist = tasks[todolistId];
-    const currentTask: any = tasksForCurrentTodolist.find((el) => {
-        return el.id === id
-    })
-    //const model = {...currentTask, status: status}
-    todolistsAPI.updateTask(todolistId, id, {
-        status: status,
-        title: currentTask.title,
-        startDate: currentTask.startDate,
-        priority: currentTask.priority,
-        description: currentTask.description,
-        deadline: currentTask.deadline
-    })
-        .then((res) => {
-            const action = changeTaskStatusAC(id, status, todolistId);
-            dispatch(action)
+export const updateTaskStatusTC = (id: string, status: TaskStatuses, todolistId: string) =>
+    (dispatch: Dispatch, getState: () => AppRootStateType) => {
+        const state = getState();
+        const tasks = state.tasks;
+        const tasksForCurrentTodolist = tasks[todolistId];
+        const currentTask = tasksForCurrentTodolist.find((el) => {
+            return el.id === id
         })
-}
+        if (!currentTask) {
+            console.warn("Task is not found")
+            return;
+        }
+        //const model = {...currentTask, status: status}
+        todolistsAPI.updateTask(todolistId, id, {
+            status: status,
+            title: currentTask.title,
+            startDate: currentTask.startDate,
+            priority: currentTask.priority,
+            description: currentTask.description,
+            deadline: currentTask.deadline
+        })
+            .then((res) => {
+                const action = changeTaskStatusAC(id, status, todolistId);
+                dispatch(action)
+            })
+    }
 
-export const updateTaskTitleTC = (id: string, taskTitle: string, todolistId: string) => (dispatch: Dispatch, getState: () => AppRootStateType) => {
-    const state = getState();
-    const tasks = state.tasks;
-    const tasksForCurrentTodolist = tasks[todolistId];
-    const currentTask: any = tasksForCurrentTodolist.find((el) => {
-        return el.id === id
-    })
-    //const model = {...currentTask, status: status}
-    todolistsAPI.updateTask(todolistId, id, {
-        status: currentTask.status,
-        title: taskTitle,
-        startDate: currentTask.startDate,
-        priority: currentTask.priority,
-        description: currentTask.description,
-        deadline: currentTask.deadline
-    })
-        .then((res) => {
-            const action = changeTaskTitleAC(id, taskTitle, todolistId);
-            dispatch(action)
+export const updateTaskTitleTC = (id: string, taskTitle: string, todolistId: string) =>
+    (dispatch: Dispatch, getState: () => AppRootStateType) => {
+        const state = getState();
+        const tasks = state.tasks;
+        const tasksForCurrentTodolist = tasks[todolistId];
+        const currentTask: any = tasksForCurrentTodolist.find((el) => {
+            return el.id === id
         })
-}
+        //const model = {...currentTask, status: status}
+        todolistsAPI.updateTask(todolistId, id, {
+            status: currentTask.status,
+            title: taskTitle,
+            startDate: currentTask.startDate,
+            priority: currentTask.priority,
+            description: currentTask.description,
+            deadline: currentTask.deadline
+        })
+            .then((res) => {
+                const action = changeTaskTitleAC(id, taskTitle, todolistId);
+                dispatch(action)
+            })
+    }
 
 export type SetTasksActionType = ReturnType<typeof setTasksAC>;
 
