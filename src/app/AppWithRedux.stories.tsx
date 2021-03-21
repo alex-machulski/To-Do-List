@@ -12,7 +12,7 @@ export default {
     argTypes: {},
 } as Meta;
 
-const Template: Story = (args) => <AppWithRedux {...args} />;
+const Template: Story = (args) => <AppWithRedux demo={true} {...args} />;
 
 export const AppWithReduxExample = Template.bind({});
 AppWithReduxExample.args = {};

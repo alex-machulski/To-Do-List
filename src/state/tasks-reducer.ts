@@ -5,18 +5,19 @@ import {
     ADD_TODOLIST,
     AddTodolistActionType,
     REMOVE_TODOLIST,
-    RemoveTodolistActionType, SET_TODOLISTS,
+    RemoveTodolistActionType,
+    SET_TODOLISTS,
     SetTodolistsActionType
 } from "./todolists-reducer";
 import {TasksStateType} from "../app/AppWithRedux";
-import {setAppErrorAC, SetAppErrorActionType, setAppStatusAC, SetAppStatusActionType} from "./app-reducer";
+import {SetAppErrorActionType, setAppStatusAC, SetAppStatusActionType} from "./app-reducer";
+import {handleServerAppError, handleServerNetworkError} from "../utils/error-utils";
 
 const REMOVE_TASK = "REMOVE-TASK";
 const ADD_TASK = "ADD-TASK";
 const CHANGE_TASK_STATUS = "CHANGE-TASK-STATUS";
 const CHANGE_TASK_TITLE = "CHANGE-TASK-TITLE";
 const SET_TASKS = "SET-TASKS";
-
 
 const initialState: TasksStateType = {}
 
@@ -95,9 +96,11 @@ export const fetchTasksTC = (todolistId: string) => (dispatch: Dispatch<ActionsT
     todolistsAPI.getTasks(todolistId)
         .then((res) => {
             const tasks = res.data.items
-            const action = setTasksAC(tasks, todolistId)
-            dispatch(action)
+            dispatch(setTasksAC(tasks, todolistId))
             dispatch(setAppStatusAC("succeeded"))
+        })
+        .catch(err => {
+            handleServerNetworkError(err, dispatch)
         })
 }
 
@@ -110,16 +113,10 @@ export const addTaskTC = (todolistId: string, taskTitle: string) => async (dispa
             dispatch(addTaskAC(task))
             dispatch(setAppStatusAC('succeeded'))
         } else {
-            if (res.data.messages.length) {
-                dispatch(setAppErrorAC(res.data.messages[0]))
-            } else {
-                dispatch(setAppErrorAC('Some error occurred'))
-            }
-            dispatch(setAppStatusAC('failed'))
+            handleServerAppError(res.data, dispatch)
         }
     } catch (err) {
-        dispatch(setAppErrorAC(err.message))
-        dispatch(setAppStatusAC('failed'))
+        handleServerNetworkError(err, dispatch)
     } finally {
         dispatch(setAppStatusAC("succeeded"))
     }
@@ -132,6 +129,9 @@ export const removeTaskTC = (todolistId: string, taskId: string) => (dispatch: D
             const action = removeTaskAC(taskId, todolistId);
             dispatch(action);
             dispatch(setAppStatusAC("succeeded"));
+        })
+        .catch(err => {
+            handleServerNetworkError(err, dispatch)
         })
 }
 
@@ -162,17 +162,11 @@ export const updateTaskStatusTC = (id: string, status: TaskStatuses, todolistId:
                     dispatch(action)
                     dispatch(setAppStatusAC("succeeded"));
                 } else {
-                    if (res.data.messages.length) {
-                        dispatch(setAppErrorAC(res.data.messages[0]))
-                    } else {
-                        dispatch(setAppErrorAC('Some error occurred'))
-                    }
-                    dispatch(setAppStatusAC('failed'))
+                    handleServerAppError(res.data, dispatch)
                 }
             })
             .catch(err => {
-                dispatch(setAppErrorAC(err.message))
-                dispatch(setAppStatusAC('failed'))
+                handleServerNetworkError(err, dispatch)
             })
     }
 
@@ -200,17 +194,11 @@ export const updateTaskTitleTC = (id: string, taskTitle: string, todolistId: str
                     dispatch(action);
                     dispatch(setAppStatusAC("succeeded"));
                 } else {
-                    if (res.data.messages.length) {
-                        dispatch(setAppErrorAC(res.data.messages[0]))
-                    } else {
-                        dispatch(setAppErrorAC('Some error occurred'))
-                    }
-                    dispatch(setAppStatusAC('failed'))
+                    handleServerAppError(res.data, dispatch)
                 }
             })
             .catch(err => {
-                dispatch(setAppErrorAC(err.message))
-                dispatch(setAppStatusAC('failed'))
+                handleServerNetworkError(err, dispatch)
             })
     }
 

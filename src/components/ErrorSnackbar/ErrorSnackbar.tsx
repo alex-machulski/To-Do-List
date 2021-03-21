@@ -12,7 +12,7 @@ function Alert(props: AlertProps) {
 export function ErrorSnackbar() {
 
     const dispatch = useDispatch();
-    let error = useSelector<AppRootStateType, string | null>(state => state.app.error)
+    const error = useSelector<AppRootStateType, string | null>(state => state.app.error)
 
     const handleClose = (event?: React.SyntheticEvent, reason?: string) => {
         if (reason === 'clickaway') {

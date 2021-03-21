@@ -16,3 +16,6 @@ export const AddItemFormExample = Template.bind({});
 AddItemFormExample.args = {
     addItem: action("Button inside clicked"),
 };
+
+export const AddItemFormDisabledExample = Template.bind({});
+AddItemFormDisabledExample.args = {entityStatus: 'loading'};

@@ -24,11 +24,11 @@ beforeEach(() => {
                 startDate: "", deadline: "", addedDate: "", order: 0, priority: TaskPriorities.Low},
         ],
         "todolistId2": [
-            {id: "1", title: "bread", status: TaskStatuses.New, todoListId: "todolistId1", description: "",
+            {id: "1", title: "bread", status: TaskStatuses.New, todoListId: "todolistId2", description: "",
                 startDate: "", deadline: "", addedDate: "", order: 0, priority: TaskPriorities.Low},
-            {id: "2", title: "milk", status: TaskStatuses.Completed, todoListId: "todolistId1", description: "",
+            {id: "2", title: "milk", status: TaskStatuses.Completed, todoListId: "todolistId2", description: "",
                 startDate: "", deadline: "", addedDate: "", order: 0, priority: TaskPriorities.Low},
-            {id: "3", title: "tea",status: TaskStatuses.New, todoListId: "todolistId1", description: "",
+            {id: "3", title: "tea",status: TaskStatuses.New, todoListId: "todolistId2", description: "",
                 startDate: "", deadline: "", addedDate: "", order: 0, priority: TaskPriorities.Low},
         ]
     };

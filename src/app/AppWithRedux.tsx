@@ -14,8 +14,11 @@ export type FilterValuesType = "all" | "active" | "completed";
 export type TasksStateType = {
     [key: string]: Array<TaskType>
 }
+type AppPropsType = {
+    demo?: boolean
+}
 
-function AppWithRedux() {
+function AppWithRedux({demo = false}: AppPropsType) {
 
     const status = useSelector<AppRootStateType, RequestStatusType>(state => state.app.status)
 
@@ -38,7 +41,7 @@ function AppWithRedux() {
             </AppBar>
             {status === 'loading' && <LinearProgress color="secondary"/>}
             <Container fixed>
-                <TodolistsList/>
+                <TodolistsList demo={demo}/>
             </Container>
             <ErrorSnackbar/>
         </div>
