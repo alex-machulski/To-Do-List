@@ -9,6 +9,7 @@ import {
     SetTodolistsActionType
 } from "./todolists-reducer";
 import {TasksStateType} from "../app/AppWithRedux";
+import {setAppErrorAC, SetAppErrorActionType, setAppStatusAC, SetAppStatusActionType} from "./app-reducer";
 
 const REMOVE_TASK = "REMOVE-TASK";
 const ADD_TASK = "ADD-TASK";
@@ -16,20 +17,6 @@ const CHANGE_TASK_STATUS = "CHANGE-TASK-STATUS";
 const CHANGE_TASK_TITLE = "CHANGE-TASK-TITLE";
 const SET_TASKS = "SET-TASKS";
 
-export type RemoveTaskActionType = ReturnType<typeof removeTaskAC>;
-export type AddTaskActionType = ReturnType<typeof addTaskAC>;
-export type ChangeTaskStatusActionType = ReturnType<typeof changeTaskStatusAC>;
-export type ChangeTaskTitleActionType = ReturnType<typeof changeTaskTitleAC>;
-export type SetTasksActionType = ReturnType<typeof setTasksAC>;
-
-type ActionsType = RemoveTaskActionType
-    | AddTaskActionType
-    | ChangeTaskStatusActionType
-    | ChangeTaskTitleActionType
-    | AddTodolistActionType
-    | RemoveTodolistActionType
-    | SetTodolistsActionType
-    | SetTasksActionType
 
 const initialState: TasksStateType = {}
 
@@ -104,28 +91,47 @@ export const setTasksAC = (tasks: Array<TaskType>, todolistId: string) =>
 
 // thunks
 export const fetchTasksTC = (todolistId: string) => (dispatch: Dispatch<ActionsType>) => {
+    dispatch(setAppStatusAC("loading"));
     todolistsAPI.getTasks(todolistId)
         .then((res) => {
             const tasks = res.data.items
             const action = setTasksAC(tasks, todolistId)
             dispatch(action)
+            dispatch(setAppStatusAC("succeeded"))
         })
 }
 
-export const addTaskTC = (todolistId: string, taskTitle: string) => (dispatch: Dispatch<ActionsType>) => {
-    todolistsAPI.createTask(todolistId, taskTitle)
-        .then((res) => {
+export const addTaskTC = (todolistId: string, taskTitle: string) => async (dispatch: Dispatch<ActionsType>) => {
+    try {
+        dispatch(setAppStatusAC('loading'))
+        let res = await todolistsAPI.createTask(todolistId, taskTitle)
+        if (res.data.resultCode === 0) {
             const task = res.data.data.item
-            const action = addTaskAC(task);
-            dispatch(action)
-        })
+            dispatch(addTaskAC(task))
+            dispatch(setAppStatusAC('succeeded'))
+        } else {
+            if (res.data.messages.length) {
+                dispatch(setAppErrorAC(res.data.messages[0]))
+            } else {
+                dispatch(setAppErrorAC('Some error occurred'))
+            }
+            dispatch(setAppStatusAC('failed'))
+        }
+    } catch (err) {
+        dispatch(setAppErrorAC(err.message))
+        dispatch(setAppStatusAC('failed'))
+    } finally {
+        dispatch(setAppStatusAC("succeeded"))
+    }
 }
 
 export const removeTaskTC = (todolistId: string, taskId: string) => (dispatch: Dispatch<ActionsType>) => {
+    dispatch(setAppStatusAC("loading"));
     todolistsAPI.deleteTask(todolistId, taskId)
         .then((res) => {
             const action = removeTaskAC(taskId, todolistId);
-            dispatch(action)
+            dispatch(action);
+            dispatch(setAppStatusAC("succeeded"));
         })
 }
 
@@ -141,7 +147,7 @@ export const updateTaskStatusTC = (id: string, status: TaskStatuses, todolistId:
             console.warn("Task is not found")
             return;
         }
-        //const model = {...currentTask, status: status}
+        dispatch(setAppStatusAC("loading"));
         todolistsAPI.updateTask(todolistId, id, {
             status: status,
             title: currentTask.title,
@@ -151,8 +157,22 @@ export const updateTaskStatusTC = (id: string, status: TaskStatuses, todolistId:
             deadline: currentTask.deadline
         })
             .then((res) => {
-                const action = changeTaskStatusAC(id, status, todolistId);
-                dispatch(action)
+                if (res.data.resultCode === 0) {
+                    const action = changeTaskStatusAC(id, status, todolistId);
+                    dispatch(action)
+                    dispatch(setAppStatusAC("succeeded"));
+                } else {
+                    if (res.data.messages.length) {
+                        dispatch(setAppErrorAC(res.data.messages[0]))
+                    } else {
+                        dispatch(setAppErrorAC('Some error occurred'))
+                    }
+                    dispatch(setAppStatusAC('failed'))
+                }
+            })
+            .catch(err => {
+                dispatch(setAppErrorAC(err.message))
+                dispatch(setAppStatusAC('failed'))
             })
     }
 
@@ -164,6 +184,7 @@ export const updateTaskTitleTC = (id: string, taskTitle: string, todolistId: str
         const currentTask: any = tasksForCurrentTodolist.find((el) => {
             return el.id === id
         })
+        dispatch(setAppStatusAC("loading"));
         //const model = {...currentTask, status: status}
         todolistsAPI.updateTask(todolistId, id, {
             status: currentTask.status,
@@ -174,10 +195,40 @@ export const updateTaskTitleTC = (id: string, taskTitle: string, todolistId: str
             deadline: currentTask.deadline
         })
             .then((res) => {
-                const action = changeTaskTitleAC(id, taskTitle, todolistId);
-                dispatch(action)
+                if (res.data.resultCode === 0) {
+                    const action = changeTaskTitleAC(id, taskTitle, todolistId);
+                    dispatch(action);
+                    dispatch(setAppStatusAC("succeeded"));
+                } else {
+                    if (res.data.messages.length) {
+                        dispatch(setAppErrorAC(res.data.messages[0]))
+                    } else {
+                        dispatch(setAppErrorAC('Some error occurred'))
+                    }
+                    dispatch(setAppStatusAC('failed'))
+                }
+            })
+            .catch(err => {
+                dispatch(setAppErrorAC(err.message))
+                dispatch(setAppStatusAC('failed'))
             })
     }
 
+// types
+export type RemoveTaskActionType = ReturnType<typeof removeTaskAC>;
+export type AddTaskActionType = ReturnType<typeof addTaskAC>;
+export type ChangeTaskStatusActionType = ReturnType<typeof changeTaskStatusAC>;
+export type ChangeTaskTitleActionType = ReturnType<typeof changeTaskTitleAC>;
+export type SetTasksActionType = ReturnType<typeof setTasksAC>;
 
+type ActionsType = RemoveTaskActionType
+    | AddTaskActionType
+    | ChangeTaskStatusActionType
+    | ChangeTaskTitleActionType
+    | AddTodolistActionType
+    | RemoveTodolistActionType
+    | SetTodolistsActionType
+    | SetTasksActionType
+    | SetAppStatusActionType
+    | SetAppErrorActionType
 
