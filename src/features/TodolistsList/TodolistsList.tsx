@@ -15,6 +15,7 @@ import {FilterValuesType, TasksStateType} from "../../app/AppWithRedux";
 import {Grid, Paper} from "@material-ui/core";
 import AddItemForm from "../../components/AddItemForm/AddItemForm";
 import {Todolist} from "../../Todolist";
+import { Redirect } from "react-router-dom";
 
 type TodolistsListPropsType = {
     demo?: boolean
@@ -22,16 +23,15 @@ type TodolistsListPropsType = {
 
 export const TodolistsList: React.FC<TodolistsListPropsType> = ({demo = false}) => {
     const dispatch = useDispatch();
+    const todolists = useSelector<AppRootStateType, Array<TodolistDomainType>>(state => state.todolists);
+    const tasks = useSelector<AppRootStateType, TasksStateType>(state => state.tasks);
 
     useEffect(() => {
-        if (demo) {
+        if (demo || !isLoggedIn) {
             return;
         }
         dispatch(fetchTodolistsTC)
     }, []);
-
-    const todolists = useSelector<AppRootStateType, Array<TodolistDomainType>>(state => state.todolists);
-    const tasks = useSelector<AppRootStateType, TasksStateType>(state => state.tasks);
 
     const removeTask = useCallback(function (id: string, todolistId: string) {
         const thunk = removeTaskTC(todolistId, id);
@@ -69,6 +69,12 @@ export const TodolistsList: React.FC<TodolistsListPropsType> = ({demo = false}) 
         dispatch(thunk);
     }, []);
 
+    const isLoggedIn = useSelector<AppRootStateType, boolean>(state => state.auth.isLoggedIn);
+
+    if (!isLoggedIn) {
+        return <Redirect to={'/login'}/>
+    }
+
     return (
         <>
             <Grid container style={{padding: "10px"}}>
@@ -93,7 +99,6 @@ export const TodolistsList: React.FC<TodolistsListPropsType> = ({demo = false}) 
                                         removeTodolist={removeTodolist}
                                         changeTaskTitle={changeTaskTitle}
                                         changeTodolistTitle={changeTodolistTitle}
-                                        entityStatus={tl.entityStatus}
                                         demo={demo}
                                     />
                                 </Paper>

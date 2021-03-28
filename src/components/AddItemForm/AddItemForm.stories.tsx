@@ -18,4 +18,4 @@ AddItemFormExample.args = {
 };
 
 export const AddItemFormDisabledExample = Template.bind({});
-AddItemFormDisabledExample.args = {entityStatus: 'loading'};
+AddItemFormDisabledExample.args = {disabled: true};

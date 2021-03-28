@@ -1,21 +1,20 @@
 import React, {ChangeEvent, useState, KeyboardEvent} from "react";
 import {IconButton, TextField} from "@material-ui/core";
 import {AddBox} from "@material-ui/icons";
-import {RequestStatusType} from "../../state/app-reducer";
 
 export type AddItemFormPropsType = {
     addItem: (title: string) => void
-    entityStatus?: RequestStatusType
+    disabled?: boolean
 }
 
-export const AddItemForm = React.memo((props: AddItemFormPropsType) => {
+export const AddItemForm = React.memo(function({addItem, disabled = false}: AddItemFormPropsType) {
     const [title, setTitle] = useState<string>("");
     const [error, setError] = useState<string | null>(null)
 
-    const addItem = () => {
+    const addItemHandler = () => {
         const itemTitle = title.trim();
         if (itemTitle) {
-            props.addItem(itemTitle);
+            addItem(title);
         } else {
             setError("Title is required!");
         }
@@ -28,7 +27,7 @@ export const AddItemForm = React.memo((props: AddItemFormPropsType) => {
 
     const onKeyPressHandler = (e: KeyboardEvent<HTMLInputElement>) => {
         if (error !== null) setError(null);
-        if (e.key === "Enter") addItem();
+        if (e.key === "Enter") addItemHandler();
     }
 
     return (
@@ -40,9 +39,9 @@ export const AddItemForm = React.memo((props: AddItemFormPropsType) => {
                 error={!!error}
                 helperText={error}
                 label={"New Title"}
-                disabled={props.entityStatus === 'loading'}
+                disabled={disabled}
             />
-            <IconButton color={"primary"} onClick={addItem} disabled={props.entityStatus === 'loading'}>
+            <IconButton color={"primary"} onClick={addItemHandler} disabled={disabled}>
                 <AddBox/>
             </IconButton>
         </div>
