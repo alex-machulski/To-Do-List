@@ -50,7 +50,7 @@ export type AuthMeType = {
 
 export const authAPI = {
     login(data: LoginParamsType) {
-        return instance.post<ResponseType<{ userId: number }>>('auth/login', data);
+        return instance.post<ResponseType<{ userId?: number }>>('auth/login', data);
     },
     logout() {
         return instance.delete<ResponseType>('auth/login');
