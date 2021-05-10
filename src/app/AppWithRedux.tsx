@@ -64,7 +64,9 @@ function AppWithRedux({demo = false}: AppPropsType) {
                     </Typography>
                     {isLoggedIn && <Button onClick={logoutHandler} color="inherit">Logout</Button>}
                 </Toolbar>
+                <div className={"Loading"}>
                 {status === 'loading' && <LinearProgress/>}
+                </div>
             </AppBar>
             <Container fixed>
                 <Switch>
